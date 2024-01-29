@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import CompanyServices from "../../Services/CompanyServices";
+import Company from "../../Models/Company";
 
 async function index(request: Request, response: Response) {
-    const companies = await CompanyServices.getAll();
+    const companies = await Company.findAll();
     return response.json({ companies }).status(200);
 }
 
 async function edit(request: Request, response: Response) {
-    const companyId = parseInt(request.params.companyId);
-    const company = await CompanyServices.findByPk(companyId);
+    const { companyId } = request.params;
+    const company = await Company.findByPk(companyId);
     return response.json({ company }).status(200);
 }
 
@@ -16,9 +16,13 @@ async function update(request: Request, response: Response) {
     const companyId = parseInt(request.params.companyId);
     const body = request.body;
 
-    const clientUpdated = await CompanyServices.updateByPk(companyId, body);
+    const updatedCompany = await Company.update(body, {
+        where: {
+            id: companyId
+        }
+    });
 
-    return response.json({ clientUpdated }).status(201);
+    return response.json({ updatedCompany }).status(201);
 }
 
 export default {
